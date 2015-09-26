@@ -3,7 +3,7 @@
 // by Nisan and Schocken, MIT Press.
 
 /**
- *  Exclusive-or gate: out = !(a == b).
+ *  Exclusive-or gate: out = a xor b
  */
 
 CHIP Xor {
@@ -12,7 +12,9 @@ CHIP Xor {
     OUT out;
 
     PARTS:
-    Nand (a=a, b=b, out= AnandB);
-    Or   (a=a, b=b, out= AorB);
-    And  (a=AnandB, b=AorB, out=out);
+        Not(in=a, out=nota);
+        Not(in=b, out=notb);
+        And(a=a, b=notb, out=out1);
+        And(a=nota, b=b, out=out2);
+        Or(a=out1, b=out2, out=out);
 }

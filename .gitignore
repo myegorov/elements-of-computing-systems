@@ -1,5 +1,7 @@
 *.pdf
+*.txt
 
 tools/*
 refs/*
 src/*
+
