@@ -16,20 +16,8 @@ CHIP DMux4Way {
     OUT a, b, c, d;
 
     PARTS:
-    // invert selector bits
-    Not(in=sel[0], out=notsel0);
-    Not(in=sel[1], out=notsel1);
-    // select a combo
-    And(a=notsel0, b=notsel1, out=sela);
-    // select b combo
-    And(a=sel[0], b=notsel1, out=selb);
-    // select c combo
-    And(a=notsel0, b=sel[1], out=selc);
-    // select d combo
-    And(a=sel[0], b=sel[1], out=seld);
-    // And DMux's
-    And(a=sela, b=in, out=a);
-    And(a=selb, b=in, out=b);
-    And(a=selc, b=in, out=c);
-    And(a=seld, b=in, out=d);
+    // fork based on sel[0] --> pipe based on sel[1]
+    DMux(in=in, sel=sel[0], a=outx0, b=outx1);
+    DMux(in=outx0, sel=sel[1], a=a, b=c);
+    DMux(in=outx1, sel=sel[1], a=b, b=d);
 }

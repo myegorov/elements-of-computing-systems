@@ -16,26 +16,10 @@ CHIP DMux8Way {
     OUT a, b, c, d, e, f, g, h;
 
     PARTS:
-    // invert selector bits
-    Not(in=sel[0], out=notsel0);
-    Not(in=sel[1], out=notsel1);
-    Not(in=sel[2], out=notsel2);
-    // selectors for each binary signature
-    And3Way(in[0]=notsel0, in[1]=notsel1, in[2]=notsel2, out=sela);
-    And3Way(in[0]=sel[0], in[1]=notsel1, in[2]=notsel2, out=selb);
-    And3Way(in[0]=notsel0, in[1]=sel[1], in[2]=notsel2, out=selc);
-    And3Way(in[0]=sel[0], in[1]=sel[1], in[2]=notsel2, out=seld);
-    And3Way(in[0]=notsel0, in[1]=notsel1, in[2]=sel[2], out=sele);
-    And3Way(in[0]=sel[0], in[1]=notsel1, in[2]=sel[2], out=self);
-    And3Way(in[0]=notsel0, in[1]=sel[1], in[2]=sel[2], out=selg);
-    And3Way(in[0]=sel[0], in[1]=sel[1], in[2]=sel[2], out=selh);
-    // And DMux's
-    And(a=sela, b=in, out=a);
-    And(a=selb, b=in, out=b);
-    And(a=selc, b=in, out=c);
-    And(a=seld, b=in, out=d);
-    And(a=sele, b=in, out=e);
-    And(a=self, b=in, out=f);
-    And(a=selg, b=in, out=g);
-    And(a=selh, b=in, out=h);
+    // fork based on sel[:2] --> pipe based on sel[2]
+    DMux4Way(in=in, sel[0]=sel[0], sel[1]=sel[1], a=ae, b=bf, c=cg, d=dh);
+    DMux(in=ae, sel=sel[2], a=a, b=e);
+    DMux(in=bf, sel=sel[2], a=b, b=f);
+    DMux(in=cg, sel=sel[2], a=c, b=g);
+    DMux(in=dh, sel=sel[2], a=d, b=h);
 }

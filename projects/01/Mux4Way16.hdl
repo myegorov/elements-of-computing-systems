@@ -16,24 +16,8 @@ CHIP Mux4Way16 {
     OUT out[16];
 
     PARTS:
-    // invert selector bits
-    Not(in=sel[0], out=notsel0);
-    Not(in=sel[1], out=notsel1);
-    // select a combo
-    And(a=notsel0, b=notsel1, out=sela);
-    // select b combo
-    And(a=sel[0], b=notsel1, out=selb);
-    // select c combo
-    And(a=notsel0, b=sel[1], out=selc);
-    // select d combo
-    And(a=sel[0], b=sel[1], out=seld);
-    // 4 options: select bit selects input b
-    Mux16(a=false, b=a, sel=sela, out=out1);
-    Mux16(a=false, b=b, sel=selb, out=out2);
-    Mux16(a=false, b=c, sel=selc, out=out3);
-    Mux16(a=false, b=d, sel=seld, out=out4);
-    // Or Mux outputs
-    Or16(a=out1, b=out2, out=outOr1);
-    Or16(a=out3, b=out4, out=outOr2);
-    Or16(a=outOr1, b=outOr2, out=out);
+    // fork based on 1st selector bit and pipe based on 2nd bit
+    Mux16(a=a, b=b, sel=sel[0], out=outAB);
+    Mux16(a=c, b=d, sel=sel[0], out=outCD);
+    Mux16(a=outAB, b=outCD, sel=sel[1], out=out);
 }
