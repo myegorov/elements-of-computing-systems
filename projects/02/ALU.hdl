@@ -42,5 +42,19 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
-}
+    // invert control bits
+    Not(in=zx, out=notzx);
+    Not(in=nx, out=notnx);
+    Not(in=zy, out=notzy);
+    Not(in=ny, out=notny);
+    Not(in=f, out=notf);
+    Not(in=no, out=notno);
+    // bitwise or --> bitOrOut
+    And(a=notzx, b=nx, out=bitor1);
+    And(a=notzy, b=ny, out=bitor2);
+    And(a=notf, b=no, out=bitor3);
+    And(a=bitor1, b=bitor2, out=bitor4);
+    And(a=bitor3, b=bitor4, out=bitor5);
+    And16(a=bitor5, b=true, out=bitOrOut);
+    // TODO: remaining functions
+    }
