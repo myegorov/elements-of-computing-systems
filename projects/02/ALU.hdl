@@ -56,7 +56,7 @@ CHIP ALU {
     Add16(a=outnx, b=outny, out=addxy);
     And16(a=outnx, b=outny, out=andxy);
     Mux16(a=andxy, b=addxy, sel=f, out=outf);
-    // implement no & output to out
+    // implement no & output to out; redundant tmpout used for zr & ng
     Not16(in=outf, out=notout);
     Mux16(a=outf, b=notout, sel=no, out=tmpout);
     And16(a=tmpout, b=true, out=out);
