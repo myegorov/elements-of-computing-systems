@@ -46,12 +46,12 @@ CHIP ALU {
     Mux16(a=x, b=false, sel=zx, out=outzx);
     // implement nx
     Not16(in=outzx, out=notx);
-    Mux16(a=x, b=notx, sel=nx, out=outnx);
+    Mux16(a=outzx, b=notx, sel=nx, out=outnx);
     // implement zy
     Mux16(a=y, b=false, sel=zy, out=outzy);
     // implement ny
     Not16(in=outzy, out=noty);
-    Mux16(a=y, b=noty, sel=ny, out=outny);
+    Mux16(a=outzy, b=noty, sel=ny, out=outny);
     // implement f
     Add16(a=outnx, b=outny, out=addxy);
     And16(a=outnx, b=outny, out=andxy);
