@@ -13,8 +13,12 @@ CHIP FullAdder {
         carry;   // Left bit of a + b + c
 
     PARTS:
-    // implement full-adder using 2 half-adders and Or gate
-    HalfAdder(a=b, b=c, sum=halfsum, carry=halfcarry1);
-    HalfAdder(a=a, b=halfsum, sum=sum, carry=halfcarry2);
-    Or(a=halfcarry1, b=halfcarry2, out=carry);
+    // sum bit
+    Xor(a=b, b=c, out=xorOut);
+    Not(in=xorOut, out=invertXor);
+    Mux(a=xorOut, b=invertXor, sel=a, out=sum);
+    // carry bit
+    And(a=b, b=c, out=andOut);
+    Or(a=b, b=c, out=orOut);
+    Mux(a=andOut, b=orOut, sel=a, out=carry);
 }
