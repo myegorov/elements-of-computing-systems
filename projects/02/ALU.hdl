@@ -43,21 +43,27 @@ CHIP ALU {
 
     PARTS:
     // implement zx
-    Mux(a=x, b=false, sel=zx, out=outzx);
+    Mux16(a=x, b=false, sel=zx, out=outzx);
     // implement nx
-    Not(in=x, out=notx);
-    Mux(a=x, b=notx, sel=nx, out=outnx);
+    Not16(in=outzx, out=notx);
+    Mux16(a=x, b=notx, sel=nx, out=outnx);
     // implement zy
-    Mux(a=y, b=false, sel=zy, out=outzy);
+    Mux16(a=y, b=false, sel=zy, out=outzy);
     // implement ny
-    Not(in=y, out=noty);
-    Mux(a=y, b=noty, sel=ny, out=outny);
-    // implement no
-    Not(in=out, b=notout);
-    Mux(in=out, b=notout, sel=no, out=outno);
+    Not16(in=outzy, out=noty);
+    Mux16(a=y, b=noty, sel=ny, out=outny);
     // implement f
-    Add16(a=x, b=y, out=addxy);
-    And16(a=x, b=y, out=andxy);
-    
-    
+    Add16(a=outnx, b=outny, out=addxy);
+    And16(a=outnx, b=outny, out=andxy);
+    Mux16(a=andxy, b=addxy, sel=f, out=outf);
+    // implement no & output to out
+    Not16(in=outf, out=notout);
+    Mux16(a=outf, b=notout, sel=no, out=out);
+    // implement zr
+    //Or8Way(in=out[0..7], out=outzr1);
+    //Or8Way(in=out[8..15], out=outzr2);
+    //Or(a=outzr1, b=outzr2, out=outzr3);
+    //Not(in=outzr3, out=zr);
+    // implement ng
+    //And(a=tmpout[15], b=true, out=ng);
     }
