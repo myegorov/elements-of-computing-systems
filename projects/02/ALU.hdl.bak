@@ -42,22 +42,19 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-    // implement zx
-    Mux(a=x, b=false, sel=zx, out=outzx);
-    // implement nx
-    Not(in=x, out=notx);
-    Mux(a=x, b=notx, sel=nx, out=outnx);
-    // implement zy
-    Mux(a=y, b=false, sel=zy, out=outzy);
-    // implement ny
-    Not(in=y, out=noty);
-    Mux(a=y, b=noty, sel=ny, out=outny);
-    // implement no
-    Not(in=out, b=notout);
-    Mux(in=out, b=notout, sel=no, out=outno);
-    // implement f
-    Add16(a=x, b=y, out=addxy);
-    And16(a=x, b=y, out=andxy);
-    
-    
+    // invert control bits
+    Not(in=zx, out=notzx);
+    Not(in=nx, out=notnx);
+    Not(in=zy, out=notzy);
+    Not(in=ny, out=notny);
+    Not(in=f, out=notf);
+    Not(in=no, out=notno);
+    // bitwise or --> bitOrOut
+    And(a=notzx, b=nx, out=bitor1);
+    And(a=notzy, b=ny, out=bitor2);
+    And(a=notf, b=no, out=bitor3);
+    And(a=bitor1, b=bitor2, out=bitor4);
+    And(a=bitor3, b=bitor4, out=bitor5);
+    And16(a=bitor5, b=true, out=bitOrOut);
+    // TODO: remaining functions
     }
