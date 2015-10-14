@@ -58,12 +58,11 @@ CHIP ALU {
     Mux16(a=andxy, b=addxy, sel=f, out=outf);
     // implement no & output to out
     Not16(in=outf, out=notout);
-    Mux16(a=outf, b=notout, sel=no, out=out);
+    Mux16(a=outf, b=notout, sel=no, out=tmpout);
+    And16(a=tmpout, b=true, out=out);
     // implement zr
-    //Or8Way(in=out[0..7], out=outzr1);
-    //Or8Way(in=out[8..15], out=outzr2);
-    //Or(a=outzr1, b=outzr2, out=outzr3);
-    //Not(in=outzr3, out=zr);
+    Or16Way(in=tmpout, out=outzr);
+    Not(in=outzr, out=zr);
     // implement ng
     //And(a=tmpout[15], b=true, out=ng);
     }
