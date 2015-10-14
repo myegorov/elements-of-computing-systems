@@ -3,9 +3,9 @@
 # Author: Maksim Yegorov <findmaksim@gmail.com>
 # Last edit: 2015-10-05 Mon 10:25 PM
 
-for filename in ./*.hdl; do
+for filename in ./*.tst; do
     file=${filename##*/}
     base=${file%.*}
-    printf "\n"; echo $base.hdl
+    printf "\n"; echo $base.tst
     ../../tools/HardwareSimulator.sh $base.tst
 done
