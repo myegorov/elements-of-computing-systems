@@ -64,5 +64,5 @@ CHIP ALU {
     Or16Way(in=tmpout, out=outzr);
     Not(in=outzr, out=zr);
     // implement ng
-    //And(a=tmpout[15], b=true, out=ng);
+    IFFneg16(in=tmpout, out=ng);
     }
