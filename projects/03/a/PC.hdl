@@ -16,5 +16,15 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    
+    Not(in=reset, out=notreset);
+    Not(in=load, out=notload);
+    Not(in=inc, out=notinc);
+    And(a=notreset, b=load, out=setload);
+    And3Way(in[0]=notreset, in[1]=notload, in[2]=inc, out=setinc);
+    Mux16(a=dffOut, b=false, sel=reset, out=outReset);
+    Mux16(a=outReset, b=in, sel=setload, out=outLoad);
+    Inc16(in=outLoad, out=inc16out);
+    Mux16(a=outLoad, b=inc16out, sel=setinc, out=outInc);
+    Register(in=outInc,load=true, out=dffOut, out=out);
 }
