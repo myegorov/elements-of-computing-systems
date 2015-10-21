@@ -16,15 +16,17 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    
     Not(in=reset, out=notreset);
     Not(in=load, out=notload);
-    Not(in=inc, out=notinc);
     And(a=notreset, b=load, out=setload);
     And3Way(in[0]=notreset, in[1]=notload, in[2]=inc, out=setinc);
+    
+    // define filters based on control bit combo
     Mux16(a=dffOut, b=false, sel=reset, out=outReset);
     Mux16(a=outReset, b=in, sel=setload, out=outLoad);
     Inc16(in=outLoad, out=inc16out);
     Mux16(a=outLoad, b=inc16out, sel=setinc, out=outInc);
+    
+    // delay filtered result till next cycle
     Register(in=outInc,load=true, out=dffOut, out=out);
 }
