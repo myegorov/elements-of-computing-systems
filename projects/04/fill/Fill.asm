@@ -19,7 +19,6 @@
 
         @KBD
         D = M       // sample keyboard memory
-
         @RESET      // clear screen if no key pressed
         D; JEQ
 
@@ -29,8 +28,10 @@
     (RESET)
         @address    // increment address to next word in SCREEN block
         M = M + 1
+
         @bit        // retrieve characteristic bit
         D = M
+
         @address    // zero or assert all pixels
         A = M
         M = D
