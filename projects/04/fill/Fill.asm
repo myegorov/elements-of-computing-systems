@@ -25,22 +25,22 @@
         @bit        // else assert bit to fill screen
         M = -1
 
-    (RESET)         // loop to fill or clear screen
-        @bit        // retrieve characteristic bit and store in D register
-        D = M
+        (RESET)         // loop to fill or clear screen
+            @bit        // retrieve characteristic bit and store in D register
+            D = M
 
-        @address    // retrieve address and store in A register
-        A = M
+            @address    // retrieve address and store in A register
+            A = M
 
-        M = D       // set M[address] = <characteristic-bit>
+            M = D       // set M[address] = <characteristic-bit>
 
-        D = A + 1   // update current address and
-        @address    // check if we'll exceeded SCREEN block on next cycle
-        M = D
-        @KBD
-        D = D - A
-        @RESET
-        D; JLT
+            D = A + 1   // update current address and
+            @address    // check if we'll exceeded SCREEN block on next cycle
+            M = D
+            @KBD
+            D = D - A
+            @RESET
+            D; JLT
 
         @FOREVER
         0; JMP      // return to outer look to sample keyboard
