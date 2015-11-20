@@ -34,9 +34,10 @@
 
         @address    // zero or assert all pixels
         A = M
+
         M = D
 
-        D = A       // check if we've exceeded SCREEN block
+        D = A + 1   // check if we'll exceeded SCREEN block on next cycle
         @KBD
         D = D - A
         @RESET
