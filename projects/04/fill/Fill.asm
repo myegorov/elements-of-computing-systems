@@ -8,40 +8,39 @@
 // i.e. writes "black" in every pixel. When no key is pressed, the
 // program clears the screen, i.e. writes "white" in every pixel.
 
-(FOREVER)
+(FOREVER)           // loop to listen to keyboard input forever
 
-        @bit        // clear screen by resetting bits
+        @bit        // set default bit to clear screen
         M = 0
-        @SCREEN     // otherwise prepare to fill screen
+        @SCREEN     // initialize variable to point to current word in screen
         D = A
         @address
-        M = D - 1
+        M = D
 
         @KBD
-        D = M       // sample keyboard memory
+        D = M       // sample keyboard value
         @RESET      // clear screen if no key pressed
         D; JEQ
 
-        @bit        // else assert bit
+        @bit        // else assert bit to fill screen
         M = -1
 
-    (RESET)
-        @address    // increment address to next word in SCREEN block
-        M = M + 1
-
-        @bit        // retrieve characteristic bit
+    (RESET)         // loop to fill or clear screen
+        @bit        // retrieve characteristic bit and store in D register
         D = M
 
-        @address    // zero or assert all pixels
+        @address    // retrieve address and store in A register
         A = M
 
-        M = D
+        M = D       // set M[address] = <characteristic-bit>
 
-        D = A + 1   // check if we'll exceeded SCREEN block on next cycle
+        D = A + 1   // update current address and
+        @address    // check if we'll exceeded SCREEN block on next cycle
+        M = D
         @KBD
         D = D - A
         @RESET
         D; JLT
 
         @FOREVER
-        0; JMP      // loop forever
+        0; JMP      // return to outer look to sample keyboard
