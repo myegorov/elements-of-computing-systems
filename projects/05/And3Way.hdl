@@ -1,0 +1,20 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/And3Way.hdl
+
+/**
+ * 3-way And: 
+ * out = (in[0] and in[1] and in[2])
+ */
+
+CHIP And3Way {
+    IN in[3];
+    OUT out;
+
+    PARTS:
+    // And pairwise using associative property
+    And(a=in[0], b=in[1], out=out1);
+    And(a=in[2], b=out1, out=out);
+}
+
