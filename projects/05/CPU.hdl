@@ -40,48 +40,57 @@ CHIP CPU {
 
     PARTS:
     // distinguish A- from C-instruction
-    Mux16(a=instruction, b=outM, sel=instruction[15], out=ARegisterInput);
+    Mux16(a=instruction, b=outALU, sel=instruction[15], out=ARegisterInput);
 
     // load A-register and set addressM
     Not(in=instruction[15], out=AInstructionFlag);
     Or(a=AInstructionFlag, b=instruction[5], out=loadA);
-    Register(in=ARegisterInput, load=loadA, out=ARegisterOutput, out[0..14]=addressM);
+    Register(in=ARegisterInput, load=loadA, 
+            out=ARegisterOutput, out[0..14]=addressM);
 
     // load D-register
     And(a=instruction[15], b=instruction[4], out=loadD);
-    Register(in=outM, load=loadD, out=DRegisterOutput);
+    Register(in=outALU, load=loadD, out=DRegisterOutput);
 
     // distinguish A- vs. M- register
     And(a=instruction[15], b=instruction[12], out=workOnM);
     Mux16(a=ARegisterOutput, b=inM, sel=workOnM, out=AorMOutput);
 
     // ALU
-    ALU(x=DRegisterOutput, y=AorMOutput, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outM, zr=EQZero, ng=NEG);
+    ALU(x=DRegisterOutput, y=AorMOutput, 
+            zx=instruction[11], nx=instruction[10], zy=instruction[9], 
+            ny=instruction[8], f=instruction[7], no=instruction[6], 
+            out=outM, out=outALU, zr=EQZero, ng=NEG);
 
     // set writeM
     And(a=instruction[15], b=instruction[3], out=writeM);
 
     //// PC (by default increment)
     // unconditional jump
-    And3Way(in[0]=instruction[0], in[1]=instruction[1], in[2]=instruction[2], out=JMP);
+    And3Way(in[0]=instruction[0], in[1]=instruction[1], 
+            in[2]=instruction[2], out=JMP);
     // negative or zero
     Or(a=NEG, b=EQZero, out=NEGorZER);
-    And3Way(in[0]=instruction[2], in[1]=instruction[1], in[2]=NEGorZER, out=JLE);
+    And3Way(in[0]=instruction[2], in[1]=instruction[1], 
+            in[2]=NEGorZER, out=JLE);
     // not zero
     Not(in=EQZero, out=NotZero);
-    And3Way(in[0]=instruction[2], in[1]=instruction[0], in[2]=NotZero, out=JNE);
+    And3Way(in[0]=instruction[2], in[1]=instruction[0], 
+            in[2]=NotZero, out=JNE);
     // negative
     And(a=instruction[2], b=NEG, out=JLT);
     // non-negative
     Not(in=NEG, out=positive);
     Or(a=EQZero, b=positive, out=nonnegative);
-    And3Way(in[0]=instruction[1], in[1]=instruction[0], in[2]=nonnegative, out=JGE);
+    And3Way(in[0]=instruction[1], in[1]=instruction[0], 
+            in[2]=nonnegative, out=JGE);
     // zero
     And(a=instruction[1], b=EQZero, out=JEQ);
     // positive
     And3Way(in[0]=instruction[0], in[1]=NotZero, in[2]=positive, out=JGT);
     // Or the above jump conditions
-    Or8Way(in[0]=JMP, in[1]=JLE, in[2]=JNE, in[3]=JLT, in[4]=JGE, in[5]=JEQ, in[6]=JGT, in[7]=false, out=jumpOut);
+    Or8Way(in[0]=JMP, in[1]=JLE, in[2]=JNE, in[3]=JLT, in[4]=JGE, 
+            in[5]=JEQ, in[6]=JGT, in[7]=false, out=jumpOut);
     // ensure parsing C-instruction
     And(a=instruction[15], b=jumpOut, out=jump);
     // finally assign program counter
