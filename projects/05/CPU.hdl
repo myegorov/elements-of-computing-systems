@@ -64,17 +64,26 @@ CHIP CPU {
     //// PC (by default increment)
     // unconditional jump
     And3Way(in[0]=instruction[0], in[1]=instruction[1], in[2]=instruction[2], out=JMP);
-    // NEG or ZER
+    // negative or zero
     Or(a=NEG, b=EQZero, out=NEGorZER);
     And3Way(in[0]=instruction[2], in[1]=instruction[1], in[2]=NEGorZER, out=JLE);
-    // not ZER
+    // not zero
     Not(in=EQZero, out=NotZero);
     And3Way(in[0]=instruction[2], in[1]=instruction[0], in[2]=NotZero, out=JNE);
-    // NEG
+    // negative
     And(a=instruction[2], b=NEG, out=JLT);
+    // non-negative
+    Not(in=NEG, out=positive);
+    Or(a=EQZero, b=positive, out=nonnegative);
+    And3Way(in[0]=instruction[1], in[1]=instruction[0], in[2]=nonnegative, out=JGE);
+    // zero
+    And(a=instruction[1], b=EQZero, out=JEQ);
+    // positive
+    And3Way(in[0]=instruction[0], in[1]=NotZero, in[2]=positive, out=JGT);
     // Or the above jump conditions
-    //TODO...
-    And(a=instruction[15], b=OrMultiWay, out=jump);
+    Or8Way(in[0]=JMP, in[1]=JLE, in[2]=JNE, in[3]=JLT, in[4]=JGE, in[5]=JEQ, in[6]=JGT, in[7]=false, out=jumpOut);
+    // ensure parsing C-instruction
+    And(a=instruction[15], b=jumpOut, out=jump);
+    // finally assign program counter
     PC(in=ARegisterOutput, reset=reset, load=jump, inc=true, out[0..14]=pc);
-
 }
