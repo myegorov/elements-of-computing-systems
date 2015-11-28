@@ -39,33 +39,33 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // distinguish A- from C-instruction
+    //==== distinguish A- from C-instruction ========
     Mux16(a=instruction, b=outALU, sel=instruction[15], out=ARegisterInput);
 
-    // load A-register and set addressM
+    //==== load A-register and set addressM =========
     Not(in=instruction[15], out=AInstructionFlag);
     Or(a=AInstructionFlag, b=instruction[5], out=loadA);
-    Register(in=ARegisterInput, load=loadA, 
+    ARegister(in=ARegisterInput, load=loadA, 
             out=ARegisterOutput, out[0..14]=addressM);
 
-    // load D-register
+    //==== load D-register ==========================
     And(a=instruction[15], b=instruction[4], out=loadD);
-    Register(in=outALU, load=loadD, out=DRegisterOutput);
+    DRegister(in=outALU, load=loadD, out=DRegisterOutput);
 
-    // distinguish A- vs. M- register
+    //==== distinguish A- vs. M- register ===========
     And(a=instruction[15], b=instruction[12], out=workOnM);
     Mux16(a=ARegisterOutput, b=inM, sel=workOnM, out=AorMOutput);
 
-    // ALU
+    //===== ALU ======================================
     ALU(x=DRegisterOutput, y=AorMOutput, 
             zx=instruction[11], nx=instruction[10], zy=instruction[9], 
             ny=instruction[8], f=instruction[7], no=instruction[6], 
             out=outM, out=outALU, zr=EQZero, ng=NEG);
 
-    // set writeM
+    //==== set writeM ================================
     And(a=instruction[15], b=instruction[3], out=writeM);
 
-    //// PC (by default increment)
+    //==== PC (by default increment) ==================
     // unconditional jump
     And3Way(in[0]=instruction[0], in[1]=instruction[1], 
             in[2]=instruction[2], out=JMP);
