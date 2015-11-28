@@ -19,5 +19,13 @@ CHIP Computer {
     IN reset;
 
     PARTS:
-    // Put your code here:
+    // RAM API
+    Memory(in=outM, load=writeM, address=addressM, out=inM);
+
+    // CPU API
+    CPU(reset=reset, inM=inM, instruction=instruction, outM=outM,
+            writeM=writeM, addressM=addressM, pc=pc);
+
+    // ROM API
+    ROM32K(address=pc, out=instruction);
 }
