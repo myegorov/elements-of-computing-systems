@@ -19,8 +19,7 @@ class Parser:
         self.f = self.__open_file(asm_file)
 
     def __open_file(self, asm_file):
-        with open(asm_file, 'r') as infile:
-            return infile
+        return open(asm_file, 'r')
 
     def advance(self):
         if self.has_more_commands:
@@ -30,6 +29,7 @@ class Parser:
                     self.advance()
             except StopIteration:
                 self.has_more_commands = False
+                self.f.close()
 
     def parse_command_type(self):
         if self.line.startswith('@'):
